@@ -24,3 +24,49 @@ def create_task():
         "completed_at": new_task.completed_at
     }
     return response, 201
+
+# GET
+@task_bp.get("")
+def get_all_tasks():
+    query = db.select(Task).order_by(Task.id)
+    task = db.session.scalars(query)
+
+    tasks_response = []
+    for task in task:
+        tasks_response.append(
+            {
+                "id": task.id,
+                "title": task.title,
+                "description": task.description,
+                "completed_at": task.completed_at
+            }
+        )
+    return tasks_response
+
+@task_bp.get("/<task_id>")
+def get_one_task(task_id):
+    task = validate_task(task_id)
+
+    return {
+        "id": task.id,
+        "title": task.title,
+        "description": task.description,
+        "completed_at": task.completed_at
+    }
+
+# Validate Task
+def validate_task(task_id):
+    try:
+        task_id = int(task_id)
+    except:
+        response = {"message": f"Task {task_id} invalid"}
+        abort(make_response(response , 400))
+
+    query = db.select(Task).where(Task.id == task_id)
+    task = db.session.scalar(query)
+    
+    if not task:
+        response = {"message": f"Task {task_id} not found"}
+        abort(make_response(response, 404))
+
+    return task
