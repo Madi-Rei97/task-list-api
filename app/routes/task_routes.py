@@ -1,4 +1,4 @@
-from flask import Blueprint, abort, make_response, request
+from flask import Blueprint, abort, make_response, request, Response
 from app.models.task import Task
 from ..db import db
 
@@ -53,6 +53,27 @@ def get_one_task(task_id):
         "description": task.description,
         "completed_at": task.completed_at
     }
+
+# PUT
+@task_bp.put("/<task_id>")
+def update_task(task_id):
+    task = validate_task(task_id)
+    request_body = request.get_json()
+
+    task.title = request_body["title"]
+    task.description = request_body["description"]
+    db.session.commit()
+
+    return Response(status=204, mimetype="application/json")
+
+# DELETE
+@task_bp.delete("/<task_id>")
+def delete_task(task_id):
+    task = validate_task(task_id)
+    db.session.delete(task)
+    db.session.commit()
+
+    return Response(status=204, mimetype="application/json")
 
 # Validate Task
 def validate_task(task_id):
