@@ -3,7 +3,7 @@ from app.models.task import Task
 from ..db import db
 from .route_utilities import validate_model
 
-bp = Blueprint("task_bp", __name__, url_prefix="/task")
+bp = Blueprint("task_bp", __name__, url_prefix="/tasks")
 
 # POST
 @bp.post("")
@@ -13,8 +13,8 @@ def create_task():
     try:
         new_task = Task.from_dict(request_body)
         
-    except KeyError as error:
-        response = {"message": f"Invalid request: missing {error.args[0]}"}
+    except KeyError:
+        response = {"details": "Invalid data"}
         abort(make_response(response, 400))
 
     db.session.add(new_task)
@@ -52,7 +52,7 @@ def get_one_task(task_id):
 # PUT
 @bp.put("/<task_id>")
 def update_task(task_id):
-    task = validate_model(task_id)
+    task = validate_model(Task, task_id)
     request_body = request.get_json()
 
     task.title = request_body["title"]
@@ -64,7 +64,7 @@ def update_task(task_id):
 # DELETE
 @bp.delete("/<task_id>")
 def delete_task(task_id):
-    task = validate_model(task_id)
+    task = validate_model(Task, task_id)
     db.session.delete(task)
     db.session.commit()
 
