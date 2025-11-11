@@ -1,7 +1,8 @@
 from flask import Blueprint, abort, make_response, request, Response
 from app.models.task import Task
 from ..db import db
-from .route_utilities import validate_model
+from .route_utilities import (validate_model, create_model, 
+                                get_models_with_filters)
 
 bp = Blueprint("task_bp", __name__, url_prefix="/tasks")
 
@@ -9,39 +10,12 @@ bp = Blueprint("task_bp", __name__, url_prefix="/tasks")
 @bp.post("")
 def create_task():
     request_body = request.get_json()
-
-    try:
-        new_task = Task.from_dict(request_body)
-        
-    except KeyError:
-        response = {"details": "Invalid data"}
-        abort(make_response(response, 400))
-
-    db.session.add(new_task)
-    db.session.commit()
-
-    return new_task.to_dict(), 201
+    return create_model(Task, request_body)
 
 # GET
 @bp.get("")
 def get_all_tasks():
-    query = db.select(Task)
-
-    title_param = request.args.get("title")
-    if title_param:
-        query = query.where(Task.title.ilike(f"%{title_param}%"))
-
-    description_param = request.args.get("description")
-    if description_param:
-        query = query.where(Task.description.ilike(f"%{description_param}%"))
-
-    query = query.order_by(Task.id)
-    task = db.session.scalars(query)
-
-    tasks_response = []
-    for task in task:
-        tasks_response.append(task.to_dict())
-    return tasks_response
+    return get_models_with_filters(Task, request.args)
 
 @bp.get("/<task_id>")
 def get_one_task(task_id):
