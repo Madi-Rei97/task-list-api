@@ -151,7 +151,7 @@ def test_get_task_not_found(client):
     assert "details" in response_body
     assert response_body == {
         "details": f"Task 1 not found"
-    }
+        }
 
     #raise Exception("Complete test with assertion about response body")
     # *****************************************************************
