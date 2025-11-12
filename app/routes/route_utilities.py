@@ -21,7 +21,7 @@ def create_model(cls, model_data):
     try:
         new_model = cls.from_dict(model_data)
         
-    except KeyError as error:
+    except KeyError:
         response = {"details": f"Invalid data"}
         abort(make_response(response, 400))
     
