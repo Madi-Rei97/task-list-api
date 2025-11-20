@@ -29,7 +29,7 @@ class Task(db.Model):
         task_as_dict["title"] = self.title
         task_as_dict["description"] = self.description
         task_as_dict["is_complete"] = (False if self.completed_at is None else
-                                        self.completed_at)
+                                        True)
         if self.goal_id:
             task_as_dict["goal_id"] = self.goal_id
 

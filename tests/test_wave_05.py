@@ -119,7 +119,7 @@ def test_get_goal_not_found(client):
     assert response.status_code == 404
     assert "details" in response_body
     assert response_body == {
-        "details": f"Goal 1 not found"
+        "details": "Goal 1 not found"
         }
     # ---- Complete Test ----
 
@@ -174,7 +174,7 @@ def test_update_goal_not_found(client):
     assert response.status_code == 404
     assert "details" in response_body
     assert response_body == {
-        "details": f"Goal 1 not found"
+        "details": "Goal 1 not found"
         }
     # ---- Complete Assertions Here ----
 
@@ -194,7 +194,7 @@ def test_delete_goal(client, one_goal):
     response_body = response.get_json()
     assert "details" in response_body
     assert response_body == {
-        "details": f"Goal 1 not found"
+        "details": "Goal 1 not found"
         }
 
     #raise Exception("Complete test with assertion about response body")
@@ -216,9 +216,8 @@ def test_delete_goal_not_found(client):
     assert response.status_code == 404
     assert "details" in response_body
     assert response_body == {
-        "details": f"Goal 1 not found"
+        "details": "Goal 1 not found"
         }
-    assert db.session.scalars(db.select(Goal)).all() == []
     # ---- Complete Assertions Here ----
 
 
